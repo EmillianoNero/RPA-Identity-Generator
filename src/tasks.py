@@ -36,12 +36,6 @@ def takeInfo():
     data.phone = browserPhoto.execute_javascript("return document.getElementById('phone').innerText")
     data.email = browserPhoto.execute_javascript("return document.getElementById('email').innerText")
     
-    print("Html: ", data.name)
-    print("Html: ", data.address)
-    print("Html: ", data.birthday)
-    print("Html: ", data.phone)
-    print("Html: ", data.email)
-    
     return data
 
 # Run all task 
@@ -55,6 +49,3 @@ def createIDCard():
 # close all browser
 def close():
     browserPhoto.close_all_browsers()
-  
-createIDCard()
-close()
