@@ -1,20 +1,60 @@
 from RPA.Browser.Selenium import Selenium
-import time
+from RPA.HTTP import HTTP
+from pillow.generateCard import generateIdCard
+from robocorp.tasks import task
+from entities.id_data import Id
 
-browser = Selenium()
+browserPhoto = Selenium()
+http = HTTP()
 
-# take a screen of a research in duck duck go
-def takeScreen():
-    browser.open_browser("https://duckduckgo.com/", browser="firefox") # open duck duck go in firefox
-    browser.wait_until_element_is_visible("name:q")
-    browser.input_text("name:q", "apple")
-    browser.press_keys("name:q", "ENTER")
-    time.sleep(1) # wait the research
-    browser.screenshot(filename="img/results.png")
+# take a new photo in thispersondoesnotexist.com
+def takePhoto():
+    
+    # open web page
+    browserPhoto.open_available_browser("https://thispersondoesnotexist.com/")
+    browserPhoto.wait_until_element_is_visible("xpath://body", timeout=10)
+    
+    # find image in page
+    img_tag = browserPhoto.get_element_attribute("css:img", "src")
+    print(f"Image URL trouvée : {img_tag}")
+    
+    # Download image
+    http.download(url=img_tag, target_file="img/new_person.jpg", overwrite=True)
+
+# take a new identity information
+def takeInfo():
+    
+    # open web page
+    browserPhoto.open_available_browser("https://calculatit.com/Security/fake-identity-generator.html")
+    browserPhoto.wait_until_element_is_visible("xpath://body", timeout=10)
+    
+    # get data part
+    data = Id()
+    data.name = browserPhoto.execute_javascript("return document.querySelector('.identity-value').innerText")
+    data.address = browserPhoto.execute_javascript("return document.getElementById('address').innerText")
+    data.birthday = browserPhoto.execute_javascript("return document.getElementById('dob').innerText")
+    data.phone = browserPhoto.execute_javascript("return document.getElementById('phone').innerText")
+    data.email = browserPhoto.execute_javascript("return document.getElementById('email').innerText")
+    
+    print("Html: ", data.name)
+    print("Html: ", data.address)
+    print("Html: ", data.birthday)
+    print("Html: ", data.phone)
+    print("Html: ", data.email)
+    
+    return data
+
+# Run all task 
+@task 
+def createIDCard():
+    takePhoto()
+    id_info = takeInfo()
+    generateIdCard(id_info)
+    close()
 
 # close all browser
 def close():
-    browser.close_all_browsers()
+    browserPhoto.close_all_browsers()
   
-takeScreen()
+createIDCard()
 close()
