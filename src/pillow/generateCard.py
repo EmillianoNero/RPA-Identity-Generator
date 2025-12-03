@@ -4,7 +4,7 @@ from entities.id_data import Id
 # generate id card with pil library
 def generateIdCard(id: Id):
     
-    card = Image.new("RGB", (650, 350), "white")
+    card = Image.new("RGB", (650, 350), (240,240,255))
     draw = ImageDraw.Draw(card)
     
     # font part
